@@ -24,7 +24,7 @@ const resolvers = {
   },
 
   Mutation: {
-    updateBook: (root, args) => {
+    updateBook: (root: any, args: any) => {
       book.name = args.name
       book.author = args.author
       return book
@@ -32,14 +32,19 @@ const resolvers = {
   },
 }
 
-const server = new ApolloServer({ typeDefs, resolvers })
+const apolloServer = new ApolloServer({ typeDefs, resolvers })
 
-const handler = server.createHandler({ path: "/api/graphql" })
+const startServer = apolloServer.start()
+
+export default async function handler(req: any, res: any) {
+  await startServer
+  await apolloServer.createHandler({
+    path: "/api/graphql",
+  })(req, res)
+}
 
 export const config = {
   api: {
     bodyParser: false,
   },
 }
-
-export default handler
